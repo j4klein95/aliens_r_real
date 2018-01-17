@@ -6,28 +6,47 @@ var $state = document.querySelector('#state');
 var $country = document.querySelector('#country');
 var $shape = document.querySelector('#shape');
 var $searchBtn = document.querySelector('#search');
+var $loadMoreBtn = document.querySelector('#load-btn');
+
+//Set starting index and results per page variables
+var startingIndex = 0;
+var resultsPerPage = 50;
 
 // Add an event listener to the searchButton, call handleSearchButtonClick when clicked
 $searchBtn.addEventListener("click", handleSearchButtonClick);
 
 // Set filteredAddresses to addressData initially
-var sightings = dataSet;
+//var sightings = dataSet;
 
 // renderTable renders the filteredAddresses to the tbody
-function renderTable() {
+function renderTableSection() {
   $tbody.innerHTML = "";
-  for (var i = 0; i < sightings.length; i++) {
+  var endingIndex = startingIndex + resultsPerPage;
+  var addressSubset = dataSet.slice(startingIndex, endingIndex);
+  for (var i = 0; i < addressSubset.length; i++) {
     // Get get the current address object and its fields
-    var sight = sightings[i];
+    var sight = addressSubset[i];
     var fields = Object.keys(sight);
     // Create a new row in the tbody, set the index to be i + startingIndex
-    var $row = $tbody.insertRow(i);
+    var $row = $tbody.insertRow(i + startingIndex);
     for (var j = 0; j < fields.length; j++) {
       // For every field in the address object, create a new cell at set its inner text to be the current value at the current address's field
       var field = fields[j];
       var $cell = $row.insertCell(j);
       $cell.innerText = sight[field];
     }
+  }
+}
+
+$loadMoreBtn.addEventListener('click', handleButtonClick);
+
+function handleButtonClick() {
+  startingIndex += resultsPerPage;
+  renderTableSection();
+  if (startingIndex + resultsPerPage >= dataSet.length){
+    $loadMoreBtn.classList.add('disabled');
+    $loadMoreBtn.innerText = "All Addresses Loaded";
+    $loadMoreBtn.removeEventListener('click', handleButtonClick);
   }
 }
 
@@ -54,8 +73,8 @@ function handleSearchButtonClick() {
     return sightcountry === filtercountry;
     return sightshape === filtershape;
   });
-  renderTable();
+  renderTableSection();
 }
 
 // Render the table for the first time on page load
-renderTable();
+renderTableSection();
