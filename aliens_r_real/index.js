@@ -20,7 +20,6 @@ $searchBtn.addEventListener("click", handleSearchButtonClick);
 
 // renderTable renders the filteredAddresses to the tbody
 function renderTableSection() {
-  $tbody.innerHTML = "";
   var endingIndex = startingIndex + resultsPerPage;
   var addressSubset = dataSet.slice(startingIndex, endingIndex);
   for (var i = 0; i < addressSubset.length; i++) {
@@ -66,12 +65,19 @@ function handleSearchButtonClick() {
     var sightcountry = sight.country.substring(0, filtercountry.length).toLowerCase();
     var sightshape = sight.shape.substring(0, filtershape.length).toLowerCase();
 
-    // If true, add the address to the filteredAddresses, otherwise don't add it to filteredAddresses
-    return sightDateTime === filterDateTime;
-    return sightcity === filtercity;
-    return sightstate === filterstate;
-    return sightcountry === filtercountry;
-    return sightshape === filtershape;
+    // If true, add the address, otherwise don't add it to filteredAddresses
+    if (sightDateTime === filterDateTime) {
+      return true;
+    } else if (sightcity === filtercity) {
+      return true;
+    } else if (sightstate === filterstate) {
+      return true;
+    } else if (sightcountry === filtercountry) {
+      return true;
+    } else if (sightshape === filtershape) {
+      return true;
+    }
+    return false;
   });
   renderTableSection();
 }
